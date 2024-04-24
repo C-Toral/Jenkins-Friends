@@ -22,10 +22,10 @@ pipeline
 			{
                 script 
 				{
-                    suma = NUMERO_1 + NUMERO_2
-                    resta = NUMERO_1 - NUMERO_2
-                    multiplicacion = NUMERO_1 * NUMERO_2
-                    division = NUMERO_1 / NUMERO_2
+                    suma = env.NUMERO_1.toInteger() + env.NUMERO_2.toInteger()
+                    resta = env.NUMERO_1.toInteger() - env.NUMERO_2.toInteger()
+                    multiplicacion = env.NUMERO_1.toInteger() * env.NUMERO_2.toInteger()
+                    division = env.NUMERO_1.toInteger() / env.NUMERO_2.toInteger()
                     println "Suma: " + suma
                     println "Resta: " + resta
                     println "Multiplicación: " + multiplicacion
@@ -46,7 +46,7 @@ pipeline
             }
         }
         
-        stage("Stage 3: Generar archivo TXT y notificar") 
+        stage("Stage 3: Generar un archivo TXT y notificar") 
 		{
             steps 
 			{
@@ -54,8 +54,8 @@ pipeline
 				{
 					fecha = new Date()
                     def informacion = fecha + "-> Suma: " + suma + "\nResta: " + resta + "\nMultiplicación: " + multiplicacion + "\nDivisión: " + division
-                    writeFile (file: ARCHIVO, text: informacion)
-                    println "Se ha generado el archivo: " + ARCHIVO
+                    writeFile (file: env.ARCHIVO, text: informacion)
+                    println "Se ha generado el archivo: " + env.ARCHIVO
                 }
             }
         }
