@@ -1,0 +1,14 @@
+pipeline
+{
+  agent any
+  stages
+  {
+      stage("Mi primer pipeline en GITHUB")
+      {
+          steps
+          {
+              echo "Hola desde GITHUB"
+          }
+      }
+  }
+}

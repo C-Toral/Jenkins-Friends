@@ -1,0 +1,83 @@
+pipeline 
+{
+    agent any
+    
+    options 
+	{
+        timeout(time:5, unit: 'MINUTES')
+    }
+    
+    environment 
+	{
+        NUMERO_1 = 1000
+        NUMERO_2 = 3000
+        ARCHIVO = "Ejercicio_3.txt"
+    }
+    
+    stages 
+	{
+        stage("Stage 1: Realizar operaciones aritméticas") 
+		{
+            steps 
+			{
+                script 
+				{
+                    suma = env.NUMERO_1.toInteger() + env.NUMERO_2.toInteger()
+                    resta = env.NUMERO_1.toInteger() - env.NUMERO_2.toInteger()
+                    multiplicacion = env.NUMERO_1.toInteger() * env.NUMERO_2.toInteger()
+                    division = env.NUMERO_1.toInteger() / env.NUMERO_2.toInteger()
+                    println "Suma: " + suma
+                    println "Resta: " + resta
+                    println "Multiplicación: " + multiplicacion
+                    println "División: " + division
+                }
+            }
+        }
+        
+        stage("Stage 2: Ejecutar comando bat ipconfig /flushdns") 
+		{
+            steps 
+			{
+				powershell '''
+                Write-Host "Hola desde PowerShell de Jenkins!"
+                Get-ChildItem C:\
+                '''
+                bat "ipconfig /flushdns"
+            }
+        }
+        
+        stage("Stage 3: Generar un archivo TXT y notificar") 
+		{
+            steps 
+			{
+                script 
+				{
+                    def informacion = "Suma: " + suma + "\nResta: " + resta + "\nMultiplicación: " + multiplicacion + "\nDivisión: " + division
+                    writeFile (file: env.ARCHIVO, text: informacion)
+                    println "Se ha generado el archivo: " + env.ARCHIVO
+                }
+            }
+        }
+    }
+    
+    post 
+	{
+        always 
+		{
+            echo "El pipeline se ejecutó."
+        }
+        failure 
+		{
+			echo "El pipeline falló"
+			mail to: "soporte@dominio.com", subject: "Pipeline Falló", body: "El pipeline no se ejecutó correctamente."        
+        }
+		unstable
+		{
+			echo "El pipeline no se ejecuto de forma estable."
+		}
+		success
+		{
+			echo "Mensaje a ejecutar si salio todo bien"        
+		}
+    }
+}
