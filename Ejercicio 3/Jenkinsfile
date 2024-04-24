@@ -72,8 +72,8 @@ pipeline
 			echo 'El pipeline falló'
 			script
 			{
-				def errorMessage = currentBuild.rawBuild.getLog(1000).join('\n')
-				echo 'Detalles del error: ${errorMessage}'
+				//def errorMessage = currentBuild.rawBuild.getLog(1000).join('\n')
+				echo 'Detalles del error: '
 				mail to: "soporte@dominio.com", subject: "Pipeline Falló", body: "El pipeline no se ejecutó correctamente."
 			}            
         }
