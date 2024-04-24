@@ -1,0 +1,81 @@
+pipeline 
+{
+    agent any
+    
+    options 
+	{
+        timeout(time:5, unit: 'MINUTES')
+    }
+    
+    environment 
+	{
+        NUMERO_1 = 1000
+        NUMERO_2 = 3000
+        ARCHIVO = "Ejercicio_3.txt"
+    }
+    
+    stages 
+	{
+        stage("Stage 1: Realizar operaciones aritméticas") 
+		{
+            steps 
+			{
+                script 
+				{
+                    suma = NUMERO_1 + NUMERO_2
+                    resta = NUMERO_1 - NUMERO_2
+                    multiplicacion = NUMERO_1 * NUMERO_2
+                    division = NUMERO_1 / NUMERO_2
+                    println "Suma: " + suma
+                    println "Resta: " + resta
+                    println "Multiplicación: " + multiplicacion
+                    println "División: " + division
+                }
+            }
+        }
+        
+        stage("Stage 2: Ejecutar comando bat ipconfig /flushdns") 
+		{
+            steps 
+			{
+				powershell '''
+                Write-Host "Hola desde PowerShell de Jenkins!"
+                Get-ChildItem C:\
+                '''
+                bat "ipconfig /flushdns"
+            }
+        }
+        
+        stage("Stage 3: Generar archivo TXT y notificar") 
+		{
+            steps 
+			{
+                script 
+				{
+					fecha = new Date()
+                    def informacion = fecha + "-> Suma: " + suma + "\nResta: " + resta + "\nMultiplicación: " + multiplicacion + "\nDivisión: " + division
+                    writeFile (file: ARCHIVO, text: informacion)
+                    println "Se ha generado el archivo: " + ARCHIVO
+                }
+            }
+        }
+    }
+    
+    post 
+	{
+        always 
+		{
+            echo "El pipeline se ejecutó."
+        }
+        failure 
+		{
+			echo 'El pipeline falló'
+			script
+			{
+				def errorMessage = currentBuild.rawBuild.getLog(1000).join('\n')
+				echo 'Detalles del error: ${errorMessage}'
+				mail to: "soporte@dominio.com", subject: "Pipeline Falló", body: "El pipeline no se ejecutó correctamente."
+			}            
+        }
+    }
+}
